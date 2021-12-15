@@ -17,6 +17,7 @@ const App = () => {
 
     const [currentAccount, setCurrentAccount] = useState("");
     const [message, setMessage] = useState("Each unique. Each beautiful. Discover your NFT today.");
+    const [link, setLink] = useState(null);
     const [mining, setMining] = useState(false);
     
     const checkIfWalletIsConnected = async () => {
@@ -83,7 +84,9 @@ const App = () => {
         // If you're familiar with webhooks, it's very similar to that!
         connectedContract.on("NewEpicNFTMinted", (from, tokenId) => {
           console.log(from, tokenId.toNumber())
-          alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`)
+          setMessage(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link:`)
+          setLink({url: `https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`, address: CONTRACT_ADDRESS});
+          setMining(false);
         });
 
         console.log("Setup event listener!")
@@ -122,7 +125,6 @@ const App = () => {
     }
   }
 
-
   useEffect(() => {
     checkIfWalletIsConnected();
   }, [])
@@ -152,6 +154,11 @@ const App = () => {
           <p className="sub-text">
             {message}
           </p>
+          {link && 
+            <div className="link">
+              <a href={link.url} target="_blank" className="btn btn-primary">{link.address}</a>
+            </div>
+          }
           {currentAccount === "" ? renderNotConnectedContainer() : renderMintUI(mining)}
         </div>
         <div className="footer-container">
